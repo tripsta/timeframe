@@ -32,6 +32,7 @@ function Timeframe() {
     me.format       = me.options['format']     || Locale['format'];
     me.weekOffset   = me.options['weekOffset'] || Locale['weekOffset'];
     me.maxRange = me.options['maxRange'];
+    me.minRange = me.options['minRange'];
 
     me.firstDayId = me.element.attr('id') + '_firstday';
     me.lastDayId = me.element.attr('id') + '_lastday';
@@ -370,6 +371,7 @@ function Timeframe() {
       else
         me.startdrag = me.range['start'] = me.range['end'] = date;
     }
+      me.validateRange(me.range['start'], me.range['end']);
     me.refreshRange();
   };
 
@@ -435,9 +437,9 @@ function Timeframe() {
   };
 
   this.validateRange = function(start, end) {
+    var days = parseInt((end - start) / 86400000);
     if (me.maxRange) {
       var range = me.maxRange - 1;
-      var days = parseInt((end - start) / 86400000);
       if (days > range) {
         if (start == me.startdrag) {
           end = new Date(me.startdrag);
@@ -445,6 +447,22 @@ function Timeframe() {
         } else {
           start = new Date(me.startdrag);
           start.setDate(start.getDate() - range);
+        }
+      }
+    }
+    if (me.minRange) {
+      var range = me.minRange - 1;
+      var flag = true;
+      if (days <= range) {
+        if (start != me.startdrag) {
+          start = new Date(me.startdrag);
+          start.setDate(start.getDate() - range);
+          flag = start < me.earliest;
+        }        
+        if (flag) {
+          start = new Date(me.startdrag);
+          end = new Date(me.startdrag);
+          end.setDate(end.getDate() + range);
         }
       }
     }
@@ -500,7 +518,7 @@ function Timeframe() {
     if (me.dragging) me.refreshField('start').refreshField('end');
   };
 
-  this.setRange = function(start, end) {
+  this.setRange = function(start, end) { // TODO
     var range = { start: start, end: end };
     range.each(function(pair) {
       me.range.set(pair.key, Date.parseToObject(pair.value));
@@ -568,6 +586,7 @@ $(function() {
         earliest: new Date(),
         resetButton: $('#reset'),
         startField: $('#start'),
-        endField: $('#end')
+        endField: $('#end'),
+        minRange: 2
     });
 });
