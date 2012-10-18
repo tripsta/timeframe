@@ -49,36 +49,30 @@ work. An added bonus is that the text fields will live-parse more nicely! Just
 try "next tues."
 
 
-### Notes:
-
-* I'm just sick of multiple date pickers on the same page.
-
-
 An example:
 -----------
 
-    <script type="text/javascript" charset="utf-8">
-      //<![CDATA[
-        new Timeframe('calendars', {
-          startField: 'start',
-          endField: 'end',
-          earliest: new Date(),
-          resetButton: 'reset' });
-      //]]>
-    </script>
+    var timeframe = new Timeframe();
+    timeframe.initialize(window.calendars, {
+      earliest: new Date(),
+      resetButton: $('#reset'),
+      startField: $('#start'),
+      endField: $('#end')
+    });
 
 See it in action 
-[here](http://stephencelis.com/projects/timeframe#example_information).
+[here](http://kylekonrad.com/timeframe#example_information).
 
 Dependencies:
 -------------
 
-Timeframe requires [Prototype](http://prototypejs.org) 1.6 or higher.
+Timeframe requires [jQuery](http://jquery.com). It was built using 1.8, but older versions should work too.
 
 
 Contributors:
 -------------
 
+* Stephen Celis ("stephencelis") - original developer of Timeframe (using Prototype)
 * Justin Palmer ("Caged")
 * Nik Wakelin ("codetocustomer")
 * Sebastien Grosjean ("ZenCocoon")
@@ -89,11 +83,11 @@ Download:
 ---------
 
 Find the latest version of Timeframe on
-[Github](http://github.com/stephencelis/timeframe).
+[Github](http://github.com/ktkonrad/timeframe).
 
 More information can be found
-[here](http://stephencelis.com/projects/timeframe).
+[here](http://kylekonrad.com/timeframe).
 
 
-Copyright (c) 2008-2011 [Stephen Celis](http://stephencelis.com), released under
+Copyright (c) 2008-2011 [Kyle Konrad](http://kylekonrad.com), released under
 the [MIT license](http://en.wikipedia.org/wiki/Mit_license).
