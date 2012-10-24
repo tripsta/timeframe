@@ -40,6 +40,8 @@
       <dd>The earliest and latest selectable dates (accepts either a <code>Date</code> object or a <code>String</code> that can be parsed with <code>Date.parse()</code>).</dd>
       <dt><code>maxRange</code></dt>
       <dd>Limit the maximum possible range length (set to <code>1</code> to turn Timeframe into a regular old date picker).</dd>
+      <dt><code>minRange</code></dt>
+      <dd>Limit the minimum possible range length.</dd>
     </dl>
     <h3>Localization:</h3>
     <p>
@@ -114,12 +116,14 @@
   <script type="text/javascript" charset="utf-8" src="../timeframe.js"></script>
   <script type="text/javascript" charset="utf-8">
     //<![CDATA[
-      new Timeframe('calendars', {
-        startField: 'start',
-        endField: 'end',
+    var timeframe = new Timeframe();
+    timeframe.initialize(window.calendars, {
         earliest: new Date(),
-        resetButton: 'reset' });
-    //]]>
+        resetButton: $('#reset'),
+        startField: $('#start'),
+        endField: $('#end'),
+        minRange: 2
+    });
   </script>
 </body>
 </html>

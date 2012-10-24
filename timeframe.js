@@ -549,7 +549,7 @@ $.extend(Date.prototype, {
     var me = this;
     var day = me.getDay(), month = me.getMonth();
     var hours = me.getHours(), minutes = me.getMinutes();
-      function pad(num) { return num < 10 ? '0'+num : ''+num; };
+    function pad(num) { return num < 10 ? '0'+num : ''+num; };
       
     return format.replace(/\%([aAbBcdHImMpsSwyY])/g, function(part) {
       switch(part[1]) {
@@ -577,16 +577,4 @@ $.extend(Date.prototype, {
     var me = this;
     return new Date(me.getFullYear(), me.getMonth(), me.getDate(), 12);
   }
-});
-
-// Load this hotel profile                                                                                                                                                                    
-$(function() {
-    var timeframe = new Timeframe();
-    timeframe.initialize(window.calendars, {
-        earliest: new Date(),
-        resetButton: $('#reset'),
-        startField: $('#start'),
-        endField: $('#end'),
-        minRange: 2
-    });
 });
