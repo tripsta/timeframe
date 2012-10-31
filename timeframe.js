@@ -48,8 +48,8 @@ function Timeframe() {
     me.fields = { start: me.options['startField'], end: me.options['endField'] };
 
     me.range = {};
-    me.earliest = Date.parseToObject(me.options['earliest']);
-    me.latest   = Date.parseToObject(me.options['latest']);
+    me.earliest = (typeof me.options.earliest === 'object' ? me.options.earliest : Date.parseToObject(me.options.earliest));
+    me.latest = (typeof me.options.latest === 'object' ? me.options.latest : Date.parseToObject(me.options.latest));
     if (me.earliest && me.latest && me.earliest > me.latest)
       throw new Error("Timeframe: 'earliest' cannot come later than 'latest'");
 
@@ -217,7 +217,7 @@ function Timeframe() {
     var field = me.fields[fieldName];
     field.focus(function() { field.hasFocus = true; me.parseField(fieldName, true); });
     field.blur(function() { me.refreshField(fieldName); });
-    field.change(function(element, value) { if (element.hasFocus) me.parseField(fieldName, true); });
+    field.change(function() { me.parseField(fieldName, true); });
     return me;
   };
 
@@ -520,10 +520,10 @@ function Timeframe() {
 
   this.setRange = function(start, end) { // TODO
     var range = { start: start, end: end };
-    range.each(function(pair) {
-      me.range.set(pair.key, Date.parseToObject(pair.value));
-      me.refreshField(pair.key);
-      me.parseField(pair.key, true);
+      $.each(range, function(key, value) {
+      me.range[key] = Date.parseToObject(value);
+      me.refreshField(key);
+      me.parseField(key, true);
     });
     return me;
   };
