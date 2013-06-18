@@ -24,7 +24,9 @@ function Timeframe() {
 		me.element = $(element);
 		me.element.addClass('timeframe_calendar');
 		me.options = options || {};
-		if (typeof me.options.months === 'undefined') me.options.months = 2;
+		if (typeof me.options.months === 'undefined') {
+			me.options.months = 2;
+		}
 		me.months = me.options['months'];
 
 		me.weekdayNames = Locale['dayNames'];
@@ -50,8 +52,9 @@ function Timeframe() {
 		me.range = {};
 		me.earliest = (typeof me.options.earliest === 'object' ? me.options.earliest : Date.parseToObject(me.options.earliest));
 		me.latest = (typeof me.options.latest === 'object' ? me.options.latest : Date.parseToObject(me.options.latest));
-		if (me.earliest && me.latest && me.earliest > me.latest)
+		if (me.earliest && me.latest && me.earliest > me.latest) {
 			throw new Error("Timeframe: 'earliest' cannot come later than 'latest'");
+		}
 
 		me._buildButtons()._buildFields();
 
@@ -114,10 +117,11 @@ function Timeframe() {
 		var month = me.date.neutral();
 		month.setDate(1);
 
-		if (me.earliest === null || me.earliest < month)
+		if (me.earliest === null || me.earliest < month) {
 			me.buttons['previous']['element'].removeClass('disabled');
-		else
+		} else {
 			me.buttons['previous']['element'].addClass('disabled');
+		}
 
 		$.each(me.calendars, function(i, calendar) {
 			var caption = calendar.find('caption').first();
@@ -127,43 +131,56 @@ function Timeframe() {
 			var offset = (iterator.getDay() - me.weekOffset) % 7;
 			var inactive = offset > 0 ? 'pre beyond' : false;
 			iterator.setDate(iterator.getDate() - offset);
+
 			if (iterator.getDate() > 1 && !inactive) {
 				iterator.setDate(iterator.getDate() - 7);
-				if (iterator.getDate() > 1) inactive = 'pre beyond';
+				if (iterator.getDate() > 1) {
+					inactive = 'pre beyond';
+				}
 			}
 
 			$.each(calendar.find('td'), function(i, day) {
 				var $day = $(day);
 				day.date = new Date(iterator); // Is me expensive (we unload these later)? We could store the epoch time instead.
 				$day.text(day.date.getDate()).attr('class', inactive || 'active');
-				if ((me.earliest && day.date < me.earliest) || (me.latest && day.date > me.latest))
+
+				if ((me.earliest && day.date < me.earliest) || (me.latest && day.date > me.latest)){
 					$day.addClass('unselectable');
-				else
+				} else{
 					$day.addClass('selectable');
-				if (iterator.toString() === new Date().neutral().toString()) $day.addClass('today');
+				}
+
+				if (iterator.toString() === new Date().neutral().toString()) {
+					$day.addClass('today');
+				}
+
 				$day.attr('baseClass', $day.attr('class'));
 
 				iterator.setDate(iterator.getDate() + 1);
-				if (iterator.getDate() == 1) inactive = inactive ? false : 'post beyond';
+				if (iterator.getDate() == 1) {
+					inactive = inactive ? false : 'post beyond';
+				}
 			});
 
 			month.setMonth(month.getMonth() + 1);
 		});
 
-		if (me.latest === null || me.latest > month)
+		if (me.latest === null || me.latest > month) {
 			me.buttons['next']['element'].removeClass('disabled');
-		else
+		} else {
 			me.buttons['next']['element'].addClass('disabled');
+		}
 
 		return me;
 	};
 
 	this._buildButtons = function() {
 		var buttonList = $('<ul>', { id: me.element.attr('id') + '_menu', class: 'timeframe_menu' });
+
 		$.each(me.buttons, function(key, value) {
-			if (value['element'])
+			if (value['element']) {
 				value['element'].addClass('timeframe_button').addClass(key);
-			else {
+			} else {
 				var item = $('<li>');
 				var button = $('<a>', { class: 'timeframe_button ' + key, href: '#', onclick: 'return false;' }).append(value['label']);
 				button.onclick = function() { return false; };
@@ -172,13 +189,18 @@ function Timeframe() {
 				buttonList.append(item);
 			}
 		});
-		if (buttonList.children().length > 0) me.element.append(buttonList);
+
+		if (buttonList.children().length > 0) {
+			me.element.append(buttonList);
+		}
+
 		me.clearButton = $('<span>', { class: 'clear' }).append($('<span>').append('X'));
 		return me;
 	};
 
 	this._buildFields = function() {
 		var fieldset = $('<div>', { id: me.element.attr('id') + '_fields', class: 'timeframe_fields' });
+
 		$.each(me.fields, function(key, value) {
 			if (value)
 				value.addClass('timeframe_field').addClass(key);
@@ -190,8 +212,12 @@ function Timeframe() {
 				fieldset.append(container);
 			}
 		});
-		if (fieldset.children().length > 0) me.element.append(fieldset);
+
+		if (fieldset.children().length > 0) {
+			me.element.append(fieldset);
+		}
 		me.parseField('start').refreshField('start').parseField('end').refreshField('end').initDate = new Date(me.date);
+
 		return me;
 	};
 
@@ -205,6 +231,7 @@ function Timeframe() {
 		$(me.lastDayId).mouseout(me.clearTimer);
 		$(document).mouseup(me.eventMouseUp);
 		$(document).unload(me.unregister);
+
 		// mousemove listener for Opera in _disableTextSelection
 		return me._registerFieldObserver('start')._registerFieldObserver('end')._disableTextSelection();
 	};
@@ -244,13 +271,17 @@ function Timeframe() {
 		var field = me.fields[fieldName];
 		var date = Date.parseToObject(me.fields[fieldName].val());
 		var failure = me.validateField(fieldName, date);
+
 		if (failure != 'hard') {
 			me.range[fieldName] = date;
 			field.removeClass('error');
-		} else if (field.hasFocus)
+		} else if (field.hasFocus) {
 			field.addClass('error');
+		}
+
 		var date = Date.parseToObject(me.range[fieldName]);
 		me.date = date || new Date();
+
 		if (me.earliest && me.earliest > me.date) {
 			me.date = new Date(me.earliest);
 		} else if (me.latest) {
@@ -261,35 +292,48 @@ function Timeframe() {
 				me.date.setMonth(me.date.getMonth() - (me.months - 1));
 			}
 		}
+
 		me.date.setDate(1);
-		if (populate && date) me.populate();
+		if (populate && date) {
+			me.populate();
+		}
 		me.refreshRange();
+
 		return me;
 	};
 
 	this.refreshField = function(fieldName) {
 		var field = me.fields[fieldName];
 		var initValue = field.val();
+
 		if (me.range[fieldName]) {
 			field.val(typeof Date.CultureInfo == 'undefined' ?
 				me.range[fieldName].strftime(me.format) :
 				me.range[fieldName].toString(me.format));
-		} else
+		} else {
 			field.val('');
+		}
+
 		field.hasFocus && field.val() == '' && initValue != '' ? field.addClass('error') : field.removeClass('error');
 		field.hasFocus = false;
+
 		return me;
 	};
 
 	this.validateField = function(fieldName, date) {
-		if (!date) return;
+		if (!date) return '';
+
 		var error;
-		if ((me.earliest && date < me.earliest) || (me.latest && date > me.latest))
+		if ((me.earliest && date < me.earliest) || (me.latest && date > me.latest)){
 			error = 'hard';
-		else if (fieldName == 'start' && me.range['end'] && date > me.range['end'])
+
+		} else if (fieldName == 'start' && me.range['end'] && date > me.range['end']){
 			error = 'soft';
-		else if (fieldName == 'end' && me.range['start'] && date < me.range['start'])
+
+		} else if (fieldName == 'end' && me.range['start'] && date < me.range['start']) {
 			error = 'soft';
+		}
+
 		return error;
 	};
 
@@ -297,21 +341,22 @@ function Timeframe() {
 
 	this.eventClick = function(event) {
 		var el;
-		if (el = $(event.target).closest('a.timeframe_button'))
+		if (el = $(event.target).closest('a.timeframe_button')) {
 			me.handleButtonClick(event, el);
+		}
 	};
 
 	this.eventMouseDown = function(event) {
 		var el, em;
-		el = $(event.target).closest('span.clear')
+		el = $(event.target).closest('span.clear');
 		if (el.length) {
 			el.find('span').addClass('active');
-			em = $(event.target).closest('td.selectable')
+			em = $(event.target).closest('td.selectable');
 			if (em.length) {
 				me.handleDateClick(em, true);
 			}
 		} else {
-			el = $(event.target).closest('td.selectable')
+			el = $(event.target).closest('td.selectable');
 			if (el.length) {
 				me.handleDateClick(el);
 			}
@@ -320,18 +365,25 @@ function Timeframe() {
 	};
 
 	this.handleButtonClick = function(event, element) {
-		var el;
 		var movement = me.months > 1 ? me.months - 1 : 1;
+
 		if (element.hasClass('next')) {
-			if (!me.buttons['next']['element'].hasClass('disabled'))
+			if (!me.buttons['next']['element'].hasClass('disabled')) {
 				me.date.setMonth(me.date.getMonth() + movement);
+			}
+
 		} else if (element.hasClass('previous')) {
-			if (!me.buttons['previous']['element'].hasClass('disabled'))
+			if (!me.buttons['previous']['element'].hasClass('disabled')) {
 				me.date.setMonth(me.date.getMonth() - movement);
-		} else if (element.hasClass('today'))
+			}
+
+		} else if (element.hasClass('today')) {
 			me.date = new Date();
-		else if (element.hasClass('reset'))
+
+		} else if (element.hasClass('reset')) {
 			me.reset();
+		}
+
 		me.populate().refreshRange();
 	};
 
@@ -352,38 +404,49 @@ function Timeframe() {
 		if (me.stuck) {
 			me.stuck = false;
 			return;
+
 		} else if (couldClear) {
 			if (!element.hasClass('startrange')) return;
+
 		} else if (me.maxRange != 1) {
 			me.stuck = true;
 			setTimeout(function() { if (me.mousedown) me.stuck = false; }, 200);
 		}
+
 		me.getPoint(element[0].date);
 	};
 
 	this.getPoint = function(date) {
-		if (me.range['start'] && me.range['start'].toString() == date && me.range['end'])
+		if (me.range['start'] && me.range['start'].toString() == date && me.range['end']){
 			me.startdrag = me.range['end'];
-		else {
+
+		} else {
 			me.clearButton.hide();
-			if (me.range['end'] && me.range['end'].toString() == date)
+
+			if (me.range['end'] && me.range['end'].toString() == date){
 				me.startdrag = me.range['start'];
-			else
+			} else {
 				me.startdrag = me.range['start'] = me.range['end'] = date;
+			}
 		}
+
 		me.validateRange(me.range['start'], me.range['end']);
 		me.refreshRange();
 	};
 
 	this.eventMouseOver = function(event) {
 		var el;
-		if (!me.dragging)
+		if (!me.dragging){
 			me.toggleClearButton(event);
-		else if ($(event.target).closest('span.clear span.active').length);
-		else {
-			el = $(event.target).closest('td.selectable')
+
+		} else if ($(event.target).closest('span.clear span.active').length) {
+
+		} else {
+			el = $(event.target).closest('td.selectable');
+
 			if (el.length) {
 				window.clearInterval(me.timer);
+
 				if (el.attr('id') == me.lastDayId) {
 					me.timer = window.setInterval(function() {
 						if (!me.buttons['next']['element'].hasClass('disabled')) {
@@ -391,6 +454,7 @@ function Timeframe() {
 							me.populate().refreshRange();
 						}
 					}, me.scrollerDelay * 1000);
+
 				} else if (el.attr('id') == me.firstDayId) {
 					me.timer = window.setInterval(function() {
 						if (!me.buttons['previous']['element'].hasClass('disabled')) {
@@ -399,8 +463,12 @@ function Timeframe() {
 						}
 					}, me.scrollerDelay * 1000);
 				}
+
 				me.extendRange(el[0].date);
-			} else me.toggleClearButton(event);
+
+			} else {
+				me.toggleClearButton(event);
+			}
 		}
 	};
 
@@ -411,33 +479,41 @@ function Timeframe() {
 
 	this.toggleClearButton = function(event) {
 		var el;
+
 		if (/*event.element().ancestors && */$(event.target).closest('td.selected').length) {
 			el = me.element.find('#' + me.calendars[0].attr('id') +  ' .pre.selected').first();
 			if (!el.length) el = me.element.find('.active.selected').first();
 			if (!el.length) el = me.element.find('.post.selected').first();
 			if (el.length) el.prepend(me.clearButton);
 			me.clearButton.show().find('span').first().removeClass('active');
-		} else
+
+		} else {
 			me.clearButton.hide();
+		}
 	};
 
 	this.extendRange = function(date) {
 		var start, end;
 		me.clearButton.hide();
+
 		if (date > me.startdrag) {
 			start = me.startdrag;
 			end = date;
+
 		} else if (date < me.startdrag) {
 			start = date;
 			end = me.startdrag;
-		} else
+
+		} else {
 			start = end = date;
+		}
 		me.validateRange(start, end);
 		me.refreshRange();
 	};
 
 	this.validateRange = function(start, end) {
 		var days = parseInt((end - start) / 86400000);
+
 		if (me.maxRange) {
 			var range = me.maxRange - 1;
 			if (days > range) {
@@ -450,6 +526,7 @@ function Timeframe() {
 				}
 			}
 		}
+
 		if (me.minRange) {
 			var range = me.minRange - 1;
 			var flag = true;
@@ -466,17 +543,20 @@ function Timeframe() {
 				}
 			}
 		}
+
 		me.range['start'] = start;
 		me.range['end'] = end;
 	};
 
 	this.eventMouseUp = function(event) {
 		if (!me.dragging) return;
+
 		if (!me.stuck) {
 			me.dragging = false;
 			if (me.timer) {
 				clearInterval(me.timer);
 			}
+
 			if ($(event.target).closest('span.clear span.active').length) {
 				me.clearRange();
 			} else if ('onFinished' in me.options) {
@@ -491,22 +571,37 @@ function Timeframe() {
 		me.clearButton.hide().find('span').first().removeClass('active');
 		me.range['start'] = me.range['end'] = null;
 		me.refreshField('start').refreshField('end');
-		if ('onClear' in me.options) me.options['onClear']();
+		if ('onClear' in me.options) {
+			me.options['onClear']();
+		}
 	};
 
 	this.refreshRange = function() {
 		$.each(me.element.find('td'), function(i, day) {
 			var $day = $(day);
 			$day.attr('class', $day.attr('baseClass'));
+
 			if (me.range['start'] && me.range['end'] && me.range['start'] <= day.date && day.date <= me.range['end']) {
 				var baseClass = $day.hasClass('beyond') ? 'beyond_' : $day.hasClass('today') ? 'today_' : null;
 				var state = me.stuck || me.mousedown ? 'stuck' : 'selected';
-				if (baseClass) $day.addClass(baseClass + state);
+
+				if (baseClass) {
+					$day.addClass(baseClass + state);
+				}
 				$day.addClass(state);
+
 				var rangeClass = '';
-				if (me.range['start'].toString() == day.date) rangeClass += 'start';
-				if (me.range['end'].toString() == day.date) rangeClass += 'end';
-				if (rangeClass.length > 0) $day.addClass(rangeClass + 'range');
+				if (me.range['start'].toString() == day.date) {
+					rangeClass += 'start';
+				}
+
+				if (me.range['end'].toString() == day.date) {
+					rangeClass += 'end';
+				}
+
+				if (rangeClass.length > 0) {
+					$day.addClass(rangeClass + 'range');
+				}
 			}
 			/*
 			 if (Prototype.Browser.Opera) {
@@ -515,29 +610,38 @@ function Timeframe() {
 			 }
 			 */
 		});
-		if (me.dragging) me.refreshField('start').refreshField('end');
+
+		if (me.dragging) {
+			me.refreshField('start').refreshField('end');
+		}
 	};
 
 	this.setRange = function(start, end) { // TODO
 		var range = { start: start, end: end };
+
 		$.each(range, function(key, value) {
 			me.range[key] = Date.parseToObject(value);
 			me.refreshField(key);
 			me.parseField(key, true);
 		});
+
 		return me;
 	};
 
 	this.handleMouseMove = function(event) {
-		if ($(event.target).closest('#' + me.element.attr('id') + ' td')) window.getSelection().removeAllRanges(); // More Opera trickery
-
+		if ($(event.target).closest('#' + me.element.attr('id') + ' td')) {
+			window.getSelection().removeAllRanges();
+		} // More Opera trickery
 	};
 }
 
 $.extend(Date, {
 	parseToObject: function(string) {
 		var date = Date.parse(string);
-		if (!date) return null;
+
+		if (!date) {
+			return null;
+		}
 		date = new Date(date);
 		return (date == 'Invalid Date' || date == 'NaN') ? null : date.neutral();
 	}
